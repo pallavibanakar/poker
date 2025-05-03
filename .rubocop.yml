@@ -1,0 +1,9 @@
+plugins:
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+
+RSpec:
+  Enabled: true
