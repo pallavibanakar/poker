@@ -5,27 +5,23 @@ require 'poker/hand'
 module Poker
   # Evaluates winner based on ranks and card values
   class WinnerEvaluator
-    def initialize(player_one_cards, player_two_cards)
-      @first_player_rank, @first_player_values = Poker::Hand.new(player_one_cards).rank
-      @second_player_rank, @second_player_values = Poker::Hand.new(player_two_cards).rank
+    def initialize(players_hands)
+      @scores = players_hands.map.with_index do |cards, idx|
+        rank, values = Poker::Hand.new(cards).rank
+        { player: "player_#{idx + 1}", rank: rank, values: values }
+      end
     end
 
     def call
-      if @first_player_rank > @second_player_rank
-        :player_one
-      elsif @first_player_rank < @second_player_rank
-        :player_two
-      else
-        tiebreaker
-      end
-    end
+      top_score = @scores.max_by { |s| [s[:rank], s[:values]] }
 
-    def tiebreaker
-      @first_player_values.zip(@second_player_values).each do |v1, v2|
-        return :player_one if v1 > v2
-        return :player_two if v2 > v1
+      winners = @scores.select do |s|
+        s[:rank] == top_score[:rank] && s[:values] == top_score[:values]
       end
-      :draw
+
+      return :draw if winners.size > 1
+
+      winners.first[:player]
     end
   end
 end

@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe Poker::WinnerEvaluator do
+  subject(:evaluator) { described_class.new(%i[player_one player_two]) }
+
   let(:hand_double_first_player) { instance_double(Poker::Hand) }
   let(:hand_double_second_player) { instance_double(Poker::Hand) }
 
@@ -16,18 +18,16 @@ RSpec.describe Poker::WinnerEvaluator do
       allow(hand_double_first_player).to receive(:rank).and_return([5, [10, 8, 6]])
       allow(hand_double_second_player).to receive(:rank).and_return([3, [14, 13, 12]])
 
-      evaluator = described_class.new(:player_one, :player_two)
-      expect(evaluator.call).to eq(:player_one)
+      expect(evaluator.call).to eq('player_1')
     end
   end
 
   context 'when player two has a higher rank' do
-    it 'returns :player_two' do
+    it 'returns 2' do
       allow(hand_double_first_player).to receive(:rank).and_return([2, [9, 8, 7]])
       allow(hand_double_second_player).to receive(:rank).and_return([4, [5, 4, 3]])
 
-      evaluator = described_class.new(:player_one, :player_two)
-      expect(evaluator.call).to eq(:player_two)
+      expect(evaluator.call).to eq('player_2')
     end
   end
 
@@ -36,8 +36,7 @@ RSpec.describe Poker::WinnerEvaluator do
       allow(hand_double_first_player).to receive(:rank).and_return([3, [13, 8, 6]])
       allow(hand_double_second_player).to receive(:rank).and_return([3, [12, 8, 6]])
 
-      evaluator = described_class.new(:player_one, :player_two)
-      expect(evaluator.call).to eq(:player_one)
+      expect(evaluator.call).to eq('player_1')
     end
   end
 
@@ -46,8 +45,7 @@ RSpec.describe Poker::WinnerEvaluator do
       allow(hand_double_first_player).to receive(:rank).and_return([3, [13, 7, 6]])
       allow(hand_double_second_player).to receive(:rank).and_return([3, [13, 8, 6]])
 
-      evaluator = described_class.new(:player_one, :player_two)
-      expect(evaluator.call).to eq(:player_two)
+      expect(evaluator.call).to eq('player_2')
     end
   end
 
@@ -56,7 +54,6 @@ RSpec.describe Poker::WinnerEvaluator do
       allow(hand_double_first_player).to receive(:rank).and_return([2, [10, 8, 6]])
       allow(hand_double_second_player).to receive(:rank).and_return([2, [10, 8, 6]])
 
-      evaluator = described_class.new(:player_one, :player_two)
       expect(evaluator.call).to eq(:draw)
     end
   end

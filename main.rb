@@ -4,7 +4,7 @@ $LOAD_PATH << './lib'
 
 require './games_evaluator'
 
-filepath = '/home/starlekar/Downloads/poker-challenge-ruby/poker-challenge-ruby/poker.txt'
+filepath = 'spec/fixtures/poker.txt'
 
 poker = GamesEvaluator.new(filepath: filepath)
 poker.process

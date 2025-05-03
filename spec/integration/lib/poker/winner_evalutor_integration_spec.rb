@@ -3,14 +3,14 @@
 require 'spec_helper'
 
 RSpec.describe Poker::WinnerEvaluator, type: :integration do
-  subject(:evaluator) { described_class.new(hand_player_one, hand_player_two) }
+  subject(:evaluator) { described_class.new([hand_player_one, hand_player_two]) }
 
   let(:hand_player_one) { %w[5H 5C 6S 7S KD] }
   let(:hand_player_two) { %w[2C 3S 8S 8D TD] }
 
   describe '#call' do
     it 'when both player have pairs decides winner based on highest pair value' do
-      expect(evaluator.call).to eq(:player_two)
+      expect(evaluator.call).to eq('player_2')
     end
 
     context 'when both players have high card rank' do
@@ -18,7 +18,7 @@ RSpec.describe Poker::WinnerEvaluator, type: :integration do
       let(:hand_player_two) { %w[2C 5C 7D 8S QH] }
 
       it 'decides winner based on higest value card' do
-        expect(evaluator.call).to eq(:player_one)
+        expect(evaluator.call).to eq('player_1')
       end
     end
 
@@ -27,7 +27,7 @@ RSpec.describe Poker::WinnerEvaluator, type: :integration do
       let(:hand_player_two) { %w[3D 6D 7D TD QD] }
 
       it 'decides winner based on higest rank' do
-        expect(evaluator.call).to eq(:player_two)
+        expect(evaluator.call).to eq('player_2')
       end
     end
 
@@ -36,7 +36,7 @@ RSpec.describe Poker::WinnerEvaluator, type: :integration do
       let(:hand_player_two) { %w[3D 6D 7H QD QS] }
 
       it 'decides winner based on next higest value card' do
-        expect(evaluator.call).to eq(:player_one)
+        expect(evaluator.call).to eq('player_1')
       end
     end
 
@@ -45,7 +45,7 @@ RSpec.describe Poker::WinnerEvaluator, type: :integration do
       let(:hand_player_two) { %w[3C 3D 3S 9S 9D] }
 
       it 'decides winner based on higest 3 of a kind value card' do
-        expect(evaluator.call).to eq(:player_one)
+        expect(evaluator.call).to eq('player_1')
       end
     end
 

@@ -14,4 +14,11 @@ module Poker
       super
     end
   end
+
+  # FileNotFoundException for invalid file paths
+  class FileNotFoundException < StandardError
+    def initialize(msg = 'File does not exists, Please give the right path')
+      super
+    end
+  end
 end

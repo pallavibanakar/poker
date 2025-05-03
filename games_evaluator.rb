@@ -9,12 +9,16 @@ class GamesEvaluator
 
   attr_reader :results
 
-  def initialize(filepath:)
+  def initialize(filepath:, players_count: 2)
     @filepath = filepath
     @results = Hash.new(0)
+    @players_count = players_count
+    @cards_per_hand = 5
   end
 
   def process
+    raise Poker::FileNotFoundException unless File.exist?(@filepath)
+
     games = []
     File.foreach(@filepath) do |line|
       games << line.chomp
@@ -29,12 +33,13 @@ class GamesEvaluator
 
   def print_results
     puts @results
-    if @results[:player_one] > @results[:player_two]
-      puts 'Player 1 is the Winner'
-    elsif @results[:player_one] < @results[:player_two]
-      puts 'Player 2 is the Winner'
+    max_score = @results.values.max
+    winners = @results.select { |_, score| score == max_score }.keys
+
+    if winners.size == 1
+      puts "#{format_player_name(winners.first)} is the Winner"
     else
-      puts 'Game is Draw'
+      puts "Game is Draw between: #{winners.map { |p| format_player_name(p) }.join(', ')}"
     end
   end
 
@@ -50,16 +55,19 @@ class GamesEvaluator
   end
 
   def evaluate_game(game)
-    player_one_cards, player_two_cards = fetch_hands_from_game(game)
-    Poker::WinnerEvaluator.new(player_one_cards, player_two_cards).call
+    Poker::WinnerEvaluator.new(fetch_hands_from_game(game)).call
   end
 
   def fetch_hands_from_game(game)
     raise Poker::InvalidGameException unless game.is_a?(String)
 
     cards = game.split
-    raise Poker::InvalidHandCountException unless (cards.count % 5).zero?
+    raise Poker::InvalidHandCountException if cards.size != @players_count * @cards_per_hand
 
-    [cards.first(5), cards.last(5)]
+    cards.each_slice(@cards_per_hand).to_a
+  end
+
+  def format_player_name(symbol)
+    symbol.to_s.gsub('_', ' ').split.map(&:capitalize).join(' ')
   end
 end
